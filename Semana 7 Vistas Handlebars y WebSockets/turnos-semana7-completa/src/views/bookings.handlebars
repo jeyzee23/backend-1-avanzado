@@ -1,0 +1,15 @@
+<h1>Reservas</h1>
+<p class="lede">Lista renderizada desde <code>bookings.json</code>.</p>
+
+{{#if bookings.length}}
+  <ul class="list">
+    {{#each bookings}}
+      <li>
+        <a href="/bookings/{{id}}">#{{id}} · {{clientName}}</a>
+        <span>{{date}} {{time}} · {{status}}</span>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No hay reservas.</p>
+{{/if}}

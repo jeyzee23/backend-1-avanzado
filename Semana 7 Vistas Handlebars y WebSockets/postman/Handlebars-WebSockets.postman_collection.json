@@ -1,0 +1,162 @@
+{
+  "info": {
+    "name": "Handlebars WebSockets - Turnos",
+    "description": "Semana 7.\n\n1) npm run dev en completa o starter\n2) Base URL: http://localhost:8080\n3) Para sockets: dejá /realtime abierto en el browser y corré Crear / Actualizar / Borrar.\n\nLas vistas HTML no se prueban acá: se abren en el navegador.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "serviceId", "value": "1" },
+    { "key": "bookingId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "00 - Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 - Services API",
+      "item": [
+        {
+          "name": "Listar servicios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services"
+          }
+        },
+        {
+          "name": "Crear servicio (actualiza /realtime)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.payload?.id) {",
+                  "  pm.collectionVariables.set('serviceId', String(json.payload.id));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consulta de guardia\",\n  \"description\": \"Atención inmediata de 20 minutos\",\n  \"duration\": 20,\n  \"price\": 18000,\n  \"category\": \"salud\",\n  \"available\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/services"
+          }
+        },
+        {
+          "name": "Obtener servicio por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}"
+          }
+        },
+        {
+          "name": "Marcar no disponible (actualiza /realtime)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"available\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/services/{{serviceId}}"
+          }
+        },
+        {
+          "name": "Eliminar servicio (actualiza /realtime)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Bookings API",
+      "item": [
+        {
+          "name": "Listar reservas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "Crear reserva",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.payload?.id) {",
+                  "  pm.collectionVariables.set('bookingId', String(json.payload.id));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientName\": \"María Ruiz\",\n  \"clientEmail\": \"maria@example.com\",\n  \"date\": \"2026-08-26\",\n  \"time\": \"11:00\",\n  \"status\": \"pending\"\n}"
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "Obtener reserva por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}"
+          }
+        },
+        {
+          "name": "Agregar servicio a la reserva",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/services/{{serviceId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Vistas (recordatorio)",
+      "item": [
+        {
+          "name": "Estas se abren en el browser, no en Postman",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/services"
+          }
+        }
+      ]
+    }
+  ]
+}

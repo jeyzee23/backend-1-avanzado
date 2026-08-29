@@ -1,0 +1,53 @@
+<section class="hero">
+  <p class="kicker">Socket.io</p>
+  <h1>Tablero en vivo</h1>
+  <p class="lede">
+    Handlebars pinta la lista inicial. A partir de ahí, el JS del browser escucha
+    <code>servicesUpdated</code>. Abrí esta URL en dos ventanas.
+  </p>
+</section>
+
+<form id="service-form" class="form">
+  <label>
+    Nombre
+    <input name="name" required placeholder="Corte + barba" />
+  </label>
+  <label>
+    Descripción
+    <input name="description" required placeholder="Servicio de 45 minutos" />
+  </label>
+  <label>
+    Duración (min)
+    <input name="duration" type="number" required value="30" />
+  </label>
+  <label>
+    Precio
+    <input name="price" type="number" required value="18000" />
+  </label>
+  <label>
+    Categoría
+    <input name="category" required value="estetica" />
+  </label>
+  <button type="submit">Agregar por socket</button>
+</form>
+
+<p id="form-error" class="error" hidden></p>
+
+<ul id="services-list" class="grid">
+  {{#each services}}
+    <li class="card" data-id="{{id}}">
+      <p class="meta">{{category}} · {{duration}} min</p>
+      <h2>{{name}}</h2>
+      <p>{{description}}</p>
+      <p class="price">${{price}}</p>
+      {{#if available}}
+        <span class="badge ok">Disponible</span>
+      {{else}}
+        <span class="badge no">No disponible</span>
+      {{/if}}
+    </li>
+  {{/each}}
+</ul>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realtime.js"></script>

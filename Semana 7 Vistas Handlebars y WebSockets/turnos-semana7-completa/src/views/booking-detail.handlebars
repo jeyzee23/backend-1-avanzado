@@ -1,0 +1,23 @@
+<p class="kicker"><a href="/bookings">← Reservas</a></p>
+<h1>Reserva de {{booking.clientName}}</h1>
+
+<ul class="facts">
+  <li>Email: {{booking.clientEmail}}</li>
+  <li>Fecha: {{booking.date}}</li>
+  <li>Hora: {{booking.time}}</li>
+  <li>Estado: {{booking.status}}</li>
+</ul>
+
+<h2>Servicios asociados</h2>
+{{#if booking.services.length}}
+  <ul class="list">
+    {{#each booking.services}}
+      <li>
+        {{name}}
+        <span>id {{service}} · cantidad {{quantity}} · ${{price}}</span>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>Esta reserva todavía no tiene servicios.</p>
+{{/if}}

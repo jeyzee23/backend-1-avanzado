@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Consulta clínica",
+    "description": "Control general de 30 minutos",
+    "duration": 30,
+    "price": 15000,
+    "category": "salud",
+    "available": true
+  },
+  {
+    "id": 2,
+    "name": "Limpieza dental",
+    "description": "Higiene y revisión odontológica",
+    "duration": 45,
+    "price": 22000,
+    "category": "salud",
+    "available": true
+  },
+  {
+    "id": 3,
+    "name": "Corte + barba",
+    "description": "Servicio de estética para cabello y barba",
+    "duration": 40,
+    "price": 12000,
+    "category": "estetica",
+    "available": true
+  },
+  {
+    "id": 4,
+    "name": "Masaje descontracturante",
+    "description": "Sesión de 60 minutos",
+    "duration": 60,
+    "price": 28000,
+    "category": "bienestar",
+    "available": false
+  }
+]

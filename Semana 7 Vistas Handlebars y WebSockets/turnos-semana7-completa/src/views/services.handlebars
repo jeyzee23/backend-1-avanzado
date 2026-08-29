@@ -1,0 +1,22 @@
+<h1>Servicios disponibles</h1>
+<p class="lede">Esto lo armó Handlebars en el servidor. Recargá la página para ver cambios. En <a href="/realtime">/realtime</a> no hace falta.</p>
+
+{{#if services.length}}
+  <div class="grid">
+    {{#each services}}
+      <article class="card">
+        <p class="meta">{{category}} · {{duration}} min</p>
+        <h2><a href="/services/{{id}}">{{name}}</a></h2>
+        <p>{{description}}</p>
+        <p class="price">${{price}}</p>
+        {{#if available}}
+          <span class="badge ok">Disponible</span>
+        {{else}}
+          <span class="badge no">No disponible</span>
+        {{/if}}
+      </article>
+    {{/each}}
+  </div>
+{{else}}
+  <p>No hay servicios todavía.</p>
+{{/if}}

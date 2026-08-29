@@ -1,0 +1,28 @@
+<section class="hero">
+  <p class="kicker">Semana 7 · Handlebars + WebSockets</p>
+  <h1>Sistema de turnos</h1>
+  <p class="lede">
+    La API sigue respondiendo JSON. Estas páginas son HTML renderizado en el servidor.
+    El tablero en vivo se actualiza sin recargar.
+  </p>
+</section>
+
+<section class="stats">
+  <article>
+    <strong>{{servicesCount}}</strong>
+    <span>servicios</span>
+  </article>
+  <article>
+    <strong>{{availableCount}}</strong>
+    <span>disponibles</span>
+  </article>
+  <article>
+    <strong>{{bookingsCount}}</strong>
+    <span>reservas</span>
+  </article>
+</section>
+
+<section class="actions">
+  <a class="btn" href="/services">Ver servicios</a>
+  <a class="btn ghost" href="/realtime">Abrir tablero en vivo</a>
+</section>

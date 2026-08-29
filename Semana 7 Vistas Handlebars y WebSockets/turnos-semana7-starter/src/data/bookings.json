@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1,
+    "clientName": "Ana Pérez",
+    "clientEmail": "ana@example.com",
+    "date": "2026-08-24",
+    "time": "10:00",
+    "status": "confirmed",
+    "services": [
+      { "service": 1, "quantity": 1 },
+      { "service": 2, "quantity": 1 }
+    ]
+  },
+  {
+    "id": 2,
+    "clientName": "Luis Gómez",
+    "clientEmail": "luis@example.com",
+    "date": "2026-08-25",
+    "time": "16:30",
+    "status": "pending",
+    "services": [
+      { "service": 3, "quantity": 2 }
+    ]
+  }
+]
