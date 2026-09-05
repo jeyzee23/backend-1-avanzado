@@ -1,6 +1,6 @@
-# Semana 7 — Completa (Handlebars + WebSockets)
+# Semana 7 — Completa
 
-Versión resuelta. Para dictar en vivo usá `../turnos-semana7-starter`.
+Versión de referencia: vistas Handlebars y tablero en vivo con Socket.io.
 
 ```bash
 npm install
@@ -8,15 +8,10 @@ npm run dev
 ```
 
 - Home: http://localhost:8080
-- Servicios (HTML): http://localhost:8080/services
+- Servicios: http://localhost:8080/services
 - Tablero en vivo: http://localhost:8080/realtime
 - API: http://localhost:8080/api/services
 
-Postman: `../postman/Handlebars-WebSockets.postman_collection.json`
+Postman: [`../postman/Handlebars-WebSockets.postman_collection.json`](../postman/Handlebars-WebSockets.postman_collection.json).
 
-## Demo de 30 segundos
-
-1. Abrí `/realtime` en dos ventanas.
-2. En Postman: **Crear servicio**.
-3. Las dos ventanas se actualizan solas.
-4. En una ventana: mandá el form. La otra también se actualiza.
+Para ver los sockets: abrí `/realtime` en dos ventanas, creá un servicio por Postman o por el form, y las dos listas se actualizan.

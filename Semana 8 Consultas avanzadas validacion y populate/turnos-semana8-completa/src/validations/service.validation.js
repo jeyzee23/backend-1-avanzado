@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Body de POST /api/services. duration: "30" (string) → 400: pide number, no coerce.
 export const createServiceSchema = z.object({
   name: z.string().trim().min(1, "name es obligatorio"),
   description: z.string().trim().min(1, "description es obligatorio"),
@@ -15,7 +14,6 @@ export const createServiceSchema = z.object({
   available: z.boolean().optional().default(true),
 });
 
-// PUT: todos los campos opcionales, pero al menos uno tiene que venir (.refine).
 export const updateServiceSchema = z
   .object({
     name: z.string().trim().min(1, "name no puede estar vacío").optional(),

@@ -205,3 +205,35 @@ test("listado de reservas no exige populate; vistas home responden", async () =>
   assert.equal(home.status, 200);
   assert.match(home.text, /Sistema de turnos/);
 });
+
+test("GET /services aplica category, available y pagina desde la query", async () => {
+  await ServiceModel.create([
+    sampleService({ name: "Consulta clínica", category: "salud", available: true, price: 10 }),
+    sampleService({ name: "Manicura", category: "estetica", available: false, price: 20 }),
+    sampleService({ name: "Masaje", category: "bienestar", available: false, price: 30 }),
+  ]);
+
+  const byCategory = await request(app).get("/services").query({ category: "salud" });
+  assert.equal(byCategory.status, 200);
+  assert.match(byCategory.text, /Consulta clínica/);
+  assert.doesNotMatch(byCategory.text, /Manicura/);
+  assert.doesNotMatch(byCategory.text, /Masaje/);
+
+  const hidden = await request(app).get("/services").query({ available: "false" });
+  assert.equal(hidden.status, 200);
+  assert.match(hidden.text, /Manicura/);
+  assert.match(hidden.text, /Masaje/);
+  assert.doesNotMatch(hidden.text, /Consulta clínica/);
+
+  const page = await request(app).get("/services").query({
+    available: "false",
+    page: 2,
+    limit: 1,
+    sortBy: "price",
+    order: "asc",
+  });
+  assert.equal(page.status, 200);
+  assert.match(page.text, /Masaje/);
+  assert.doesNotMatch(page.text, /Manicura/);
+  assert.match(page.text, /href="\/services\?/);
+});

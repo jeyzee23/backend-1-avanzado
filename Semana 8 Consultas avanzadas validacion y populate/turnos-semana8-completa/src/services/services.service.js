@@ -12,12 +12,10 @@ export class ServicesService {
     this.repository = repository;
   }
 
-  // Zod ya validó la query. Acá solo se traduce a algo que Mongo entienda
-  // y se arma el JSON con payload + metadata de páginas.
-  async list(query = {}) {
-    const filter = buildServiceFilter(query); // { category, available } o {}
-    const sort = buildSort(query); // { price: 1 } / { price: -1 } / etc.
-    const { page, limit, skip } = buildPagination(query); // skip = (page - 1) * limit
+  async list(query = {}, { path = "/api/services" } = {}) {
+    const filter = buildServiceFilter(query);
+    const sort = buildSort(query);
+    const { page, limit, skip } = buildPagination(query);
     const { items, totalDocs } = await this.repository.listPaginated(filter, {
       skip,
       limit,
@@ -31,6 +29,7 @@ export class ServicesService {
         page,
         limit,
         query,
+        path,
       }),
     };
   }

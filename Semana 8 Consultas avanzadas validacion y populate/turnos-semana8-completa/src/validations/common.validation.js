@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { applySortCompatibility, DEFAULT_LIMIT, MAX_LIMIT } from "../utils/service-query.js";
 
-// Zod = formato del request. No pregunta si el doc existe en Mongo.
-// "/api/services/1" → 400. Un ObjectId de 24 hex que no está en la base → 404 del service.
 export const objectIdSchema = z
   .string()
   .regex(/^[a-fA-F0-9]{24}$/, "El id debe ser un ObjectId de 24 caracteres hexadecimales");
@@ -20,21 +18,16 @@ export const bookingServiceParamsSchema = z.object({
   sid: objectIdSchema,
 });
 
-// En la URL todo es string: available=false.
-// z.coerce.boolean() rompería esto: Boolean("false") === true.
-// Por eso: solo acepta "true"|"false" y después lo pasa a boolean real.
 const availableQuerySchema = z
   .enum(["true", "false"], {
     errorMap: () => ({ message: "available debe ser true o false" }),
   })
   .transform((value) => value === "true");
 
-// Query de GET /api/services. page=0 o limit=100 → 400, no llega a Mongo.
 export const servicesQuerySchema = z
   .object({
     category: z.string().trim().min(1).optional(),
     available: availableQuerySchema.optional(),
-    // coerce: "?page=2" llega como string "2" y lo convierte a number 2.
     page: z.coerce
       .number({ invalid_type_error: "page debe ser un número entero" })
       .int("page debe ser un entero")

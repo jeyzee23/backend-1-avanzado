@@ -1,10 +1,58 @@
 <h1>Servicios</h1>
 <p class="lede">
-  Vista HTML de consulta. La paginación y los filtros viven en
-  <code>GET /api/services?category=salud&amp;available=true&amp;page=1</code>.
+  Los filtros y la paginación usan el mismo query que
+  <code>GET /api/services</code>.
 </p>
 
+<form class="filters" method="get" action="/services">
+  <label>
+    Categoría
+    <select name="category">
+      <option value="" {{#if (eq filters.category "")}}selected{{/if}}>Todas</option>
+      <option value="salud" {{#if (eq filters.category "salud")}}selected{{/if}}>salud</option>
+      <option value="estetica" {{#if (eq filters.category "estetica")}}selected{{/if}}>estetica</option>
+      <option value="bienestar" {{#if (eq filters.category "bienestar")}}selected{{/if}}>bienestar</option>
+    </select>
+  </label>
+  <label>
+    Disponibilidad
+    <select name="available">
+      <option value="" {{#if (eq filters.available "")}}selected{{/if}}>Todas</option>
+      <option value="true" {{#if (eq filters.available "true")}}selected{{/if}}>Disponible</option>
+      <option value="false" {{#if (eq filters.available "false")}}selected{{/if}}>No disponible</option>
+    </select>
+  </label>
+  <label>
+    Ordenar por
+    <select name="sortBy">
+      <option value="price" {{#if (eq filters.sortBy "price")}}selected{{/if}}>price</option>
+      <option value="duration" {{#if (eq filters.sortBy "duration")}}selected{{/if}}>duration</option>
+      <option value="name" {{#if (eq filters.sortBy "name")}}selected{{/if}}>name</option>
+    </select>
+  </label>
+  <label>
+    Dirección
+    <select name="order">
+      <option value="asc" {{#if (eq filters.order "asc")}}selected{{/if}}>asc</option>
+      <option value="desc" {{#if (eq filters.order "desc")}}selected{{/if}}>desc</option>
+    </select>
+  </label>
+  <label>
+    Por página
+    <select name="limit">
+      <option value="5" {{#if (eq filters.limit 5)}}selected{{/if}}>5</option>
+      <option value="10" {{#if (eq filters.limit 10)}}selected{{/if}}>10</option>
+    </select>
+  </label>
+  <button type="submit">Aplicar</button>
+</form>
+
+{{#if queryError}}
+  <p class="error">{{queryError}}</p>
+{{/if}}
+
 {{#if services.length}}
+  <p class="meta">{{totalDocs}} resultado{{#unless (eq totalDocs 1)}}s{{/unless}} · página {{page}} de {{totalPages}}</p>
   <div class="grid">
     {{#each services}}
       <article class="card">
@@ -20,6 +68,21 @@
       </article>
     {{/each}}
   </div>
+  {{#if totalPages}}
+    <nav class="pager">
+      {{#if hasPrevPage}}
+        <a class="btn ghost" href="{{prevLink}}">Anterior</a>
+      {{/if}}
+      {{#if hasNextPage}}
+        <a class="btn ghost" href="{{nextLink}}">Siguiente</a>
+      {{/if}}
+    </nav>
+  {{/if}}
 {{else}}
-  <p>No hay servicios todavía. Corré <code>npm run seed</code>.</p>
+  {{#if queryError}}
+  {{else if filtersActive}}
+    <p>No hay servicios con ese filtro.</p>
+  {{else}}
+    <p>No hay servicios todavía. Corré <code>npm run seed</code>.</p>
+  {{/if}}
 {{/if}}

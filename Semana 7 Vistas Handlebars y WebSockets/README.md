@@ -1,28 +1,16 @@
-# Semana 7 — Vistas con Handlebars y WebSockets
+# Semana 7 — Handlebars y WebSockets
 
-Clase en vivo. Producto: **Sistema de Turnos**.
+La API sigue siendo el núcleo. Las vistas son HTML. Los sockets empujan cambios sin F5.
 
-## Entregables
+## Carpetas
 
-| Item | Path |
+| Qué | Path |
 | --- | --- |
-| **Cómo dictar** | `GUIA_DOCENTE.md` |
-| **Starter (para clase)** | `turnos-semana7-starter/` |
-| **Completa (solución)** | `turnos-semana7-completa/` |
-| **Postman** | `postman/Handlebars-WebSockets.postman_collection.json` |
+| Laboratorio | `turnos-semana7-starter/` · instrucciones en `LAB.md` |
+| Referencia | `turnos-semana7-completa/` |
+| Postman | `postman/Handlebars-WebSockets.postman_collection.json` |
 
-Temario del curso: `../TEMARIO.md`.
-
-## Ritmo (2 h)
-
-1. JSON vs HTML (10 min)
-2. Handlebars + router de vistas (30 min)
-3. El problema de F5 (5 min)
-4. Socket.io server + emit desde controllers (25 min)
-5. Cliente en `/realtime` + demo dos ventanas (20 min)
-6. Cierre (5 min)
-
-## Setup rápida (completa)
+## Levantar la referencia
 
 ```bash
 cd turnos-semana7-completa
@@ -30,4 +18,7 @@ npm install
 npm run dev
 ```
 
-http://localhost:8080/realtime
+- http://localhost:8080
+- http://localhost:8080/services
+- http://localhost:8080/realtime
+- http://localhost:8080/api/services

@@ -1,8 +1,8 @@
-# Laboratorio — orden de la clase
+# Laboratorio — Semana 8
 
 La API ya habla con Mongo. Las capas ya están. Handlebars y Socket.io ya andan.
 
-Hoy no migres nada. Completá **tres** huecos. Abrí este repo a la izquierda y `../turnos-semana8-completa` a la derecha. Copiá de a un bloque.
+Hoy no migres nada. Completá **tres** huecos. Si te trabás, mirá `../turnos-semana8-completa`.
 
 ```
 Cliente → Router → validate (Zod) → Controller → Service → Repository → DAO → Mongo

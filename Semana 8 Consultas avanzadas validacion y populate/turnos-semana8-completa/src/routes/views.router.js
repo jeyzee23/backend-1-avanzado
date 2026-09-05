@@ -1,10 +1,27 @@
 import { Router } from "express";
 import { ServicesService } from "../services/services.service.js";
 import { BookingsService } from "../services/bookings.service.js";
+import { servicesQuerySchema } from "../validations/common.validation.js";
 
 const router = Router();
 const servicesService = new ServicesService();
 const bookingsService = new BookingsService();
+
+const omitEmpty = (query = {}) => {
+  const next = { ...query };
+  for (const key of Object.keys(next)) {
+    if (next[key] === "") delete next[key];
+  }
+  return next;
+};
+
+const toViewFilters = (query = {}) => ({
+  category: query.category ?? "",
+  available: query.available === undefined ? "" : String(query.available),
+  sortBy: query.sortBy ?? "price",
+  order: query.order ?? "asc",
+  limit: query.limit ?? 10,
+});
 
 router.get("/", async (_req, res, next) => {
   try {
@@ -24,12 +41,37 @@ router.get("/", async (_req, res, next) => {
   }
 });
 
-router.get("/services", async (_req, res, next) => {
+router.get("/services", async (req, res, next) => {
   try {
-    const services = await servicesService.listAll();
+    const parsed = servicesQuerySchema.safeParse(omitEmpty(req.query));
+    if (!parsed.success) {
+      return res.status(400).render("services", {
+        title: "Servicios",
+        services: [],
+        queryError: parsed.error.issues[0]?.message || "Query inválida",
+        filters: toViewFilters(),
+        totalDocs: 0,
+        page: 1,
+        totalPages: 0,
+        hasPrevPage: false,
+        hasNextPage: false,
+      });
+    }
+
+    const result = await servicesService.list(parsed.data, { path: "/services" });
     res.render("services", {
       title: "Servicios",
-      services,
+      services: result.payload,
+      filters: toViewFilters(parsed.data),
+      filtersActive: Boolean(parsed.data.category || parsed.data.available !== undefined),
+      totalDocs: result.totalDocs,
+      page: result.page,
+      limit: result.limit,
+      totalPages: result.totalPages,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+      prevLink: result.prevLink,
+      nextLink: result.nextLink,
     });
   } catch (error) {
     next(error);

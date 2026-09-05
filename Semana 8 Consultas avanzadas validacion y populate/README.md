@@ -1,45 +1,34 @@
-# Semana 8 — Consultas avanzadas, validación y populate
+# Semana 8 — Consultas, validación y populate
 
-Clase en vivo. Producto: **Sistema de Turnos**.
+La API ya habla con Mongo. Esta semana se completa filtro, paginación, Zod y `populate`.
 
-Handlebars y Socket.io ya se dieron: siguen andando como base. Hoy no son el tema.
+Handlebars y Socket.io ya andan. No son el tema.
 
-## Entregables
+## Carpetas
 
-| Item | Path |
+| Qué | Path |
 | --- | --- |
-| **Cómo dictar** | `GUIA_DOCENTE.md` |
-| **Laboratorio** | `turnos-semana8-starter/LAB.md` |
-| **Starter (para clase)** | `turnos-semana8-starter/` |
-| **Completa (solución)** | `turnos-semana8-completa/` |
-| **Postman** | `postman/Consultas-Validacion-Populate.postman_collection.json` |
+| Laboratorio | `turnos-semana8-starter/` · instrucciones en `LAB.md` |
+| Referencia | `turnos-semana8-completa/` |
+| Postman | `postman/Consultas-Validacion-Populate.postman_collection.json` |
 
-Temario del curso: `../TEMARIO.md`. Programa oficial: módulo 8, págs. 204–232.
-
-## Ritmo (2 h)
-
-1. El `find()` no alcanza (10 min)
-2. Filtros + paginación + sortBy/order (35 min)
-3. Zod en el borde HTTP (30 min)
-4. Referencias y populate (25 min)
-5. Demo Postman + vistas (15 min)
-6. Cierre (5 min)
-
-## Setup rápida (completa)
-
-En esta máquina ambos `.env` ya están configurados y las bases remotas tienen datos de ejemplo. Conservá esos archivos. Completa: puerto 8080; starter: puerto 8081, con una base separada. Para una copia nueva, creá `.env` desde `.env.example` únicamente si todavía no existe y configurá tu acceso Atlas.
+## Levantar la referencia
 
 ```bash
 cd turnos-semana8-completa
+cp .env.example .env   # completá MONGO_URL
 npm install
 npm run seed
 npm run dev
 ```
 
+- http://localhost:8080/services?category=salud&available=true&page=1&limit=5
+- http://localhost:8080/api/services?category=salud&available=false
+- http://localhost:8080/bookings
+- http://localhost:8080/realtime
+
 ```bash
 npm test
 ```
 
-- http://localhost:8080/api/services?category=salud&available=false&page=1&limit=5
-- http://localhost:8080/bookings
-- http://localhost:8080/realtime
+Categorías del seed: `salud`, `estetica`, `bienestar`.

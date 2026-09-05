@@ -1,9 +1,8 @@
-# Laboratorio — orden de la clase
+# Laboratorio — Semana 7
 
 La API ya anda. No la reescribas. Hoy se suman vistas y tiempo real.
 
-Abrí este repo a la izquierda y `../turnos-semana7-completa` a la derecha.  
-Copiá de a un archivo / de a un bloque. No copies el proyecto entero.
+Si te trabás, mirá `../turnos-semana7-completa`. No copies el proyecto entero.
 
 ```
 Cliente HTML  →  views.router  →  manager  →  JSON

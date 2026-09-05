@@ -60,7 +60,7 @@ h2 { margin: 0 0 0.4rem; font-size: 1.2rem; }
 }
 
 .stats { margin: 2rem 0; }
-.stats article, .card, .form, .facts, .list {
+.stats article, .card, .form, .filters, .pager, .facts, .list {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -96,23 +96,31 @@ h2 { margin: 0 0 0.4rem; font-size: 1.2rem; }
 .list li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
 .list li:last-child { border-bottom: 0; }
 
-.form {
+.filters, .form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 0.75rem;
   margin: 1.5rem 0;
 }
 
-.form label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: var(--muted); }
-.form input {
+.pager {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+.form label, .filters label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: var(--muted); }
+.form input, .filters select {
   padding: 0.5rem 0.6rem;
   border: 1px solid var(--line);
   border-radius: 8px;
   font: inherit;
   color: var(--ink);
+  background: #fff;
 }
 
-.form button {
+.form button, .filters button {
   align-self: end;
   padding: 0.65rem 1rem;
   border: 0;

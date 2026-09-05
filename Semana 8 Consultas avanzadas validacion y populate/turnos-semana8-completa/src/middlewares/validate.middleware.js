@@ -1,5 +1,3 @@
-// Corre ANTES del controller. Si el schema falla, 400 y Mongo no se toca.
-// source = "body" | "query" | "params" según qué parte del request validamos.
 const targetBySource = {
   body: "validatedBody",
   query: "validatedQuery",

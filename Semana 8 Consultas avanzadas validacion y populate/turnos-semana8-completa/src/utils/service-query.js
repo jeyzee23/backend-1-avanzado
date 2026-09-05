@@ -2,8 +2,6 @@ export const SORT_FIELDS = ["price", "duration", "name"];
 export const DEFAULT_LIMIT = 10;
 export const MAX_LIMIT = 50;
 
-// Atajo viejo: ?sort=desc significa "ordená por price".
-// Si ya viene sortBy, no lo pisamos.
 export const applySortCompatibility = (query = {}) => {
   const next = { ...query };
 
@@ -15,8 +13,6 @@ export const applySortCompatibility = (query = {}) => {
   return next;
 };
 
-// Arma el objeto que Mongo usa en find(filter).
-// {} = sin filtro (trae todo). { category: "salud" } = solo esa categoría.
 export const buildServiceFilter = ({ category, available } = {}) => {
   const filter = {};
 
@@ -24,8 +20,6 @@ export const buildServiceFilter = ({ category, available } = {}) => {
     filter.category = category;
   }
 
-  // Tiene que ser !== undefined. Si usás if (available), el false se pierde
-  // porque en JS false es falsy y nunca entra al if.
   if (available !== undefined) {
     filter.available = available;
   }
@@ -33,25 +27,12 @@ export const buildServiceFilter = ({ category, available } = {}) => {
   return filter;
 };
 
-// Mongo espera { campo: 1 } o { campo: -1 }, no "asc"/"desc".
 export const buildSort = ({ sortBy = "price", order = "asc" } = {}) => {
   const field = SORT_FIELDS.includes(sortBy) ? sortBy : "price";
   const direction = order === "desc" ? -1 : 1;
   return { [field]: direction };
 };
 
-// page = qué hoja pide el cliente (1, 2, 3…).
-// limit = cuántos docs van en cada hoja.
-// skip  = cuántos docs hay que SALTEAR para llegar a esa hoja.
-//
-// Los paréntesis importan: (page - 1) * limit
-//   1 - 1 * 5  →  1 - 5  →  -4   (mal: * se resuelve antes)
-//   (1 - 1) * 5 →  0 * 5  →   0   (bien)
-//
-// ¿Por qué 0 en la página 1? Porque no hay que saltear nada:
-//   página 1, limit 5 → skip 0  → docs 0,1,2,3,4
-//   página 2, limit 5 → skip 5  → docs 5,6,7,8,9
-//   página 3, limit 5 → skip 10 → docs 10,11,12...
 export const buildPagination = ({ page = 1, limit = DEFAULT_LIMIT } = {}) => ({
   page,
   limit,
@@ -79,8 +60,6 @@ export const buildPageLinks = ({ path, query = {}, page, limit, prevPage, nextPa
   };
 };
 
-// Números y links que viajan en el JSON (totalDocs, page, nextLink…).
-// totalDocs tiene que ser el count YA FILTRADO, no el de toda la colección.
 export const buildPageMetadata = ({
   totalDocs,
   page,
