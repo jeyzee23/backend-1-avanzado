@@ -1,0 +1,14 @@
+<p class="kicker"><a href="/services">← Servicios</a></p>
+<h1>{{service.name}}</h1>
+<p class="lede">{{service.description}}</p>
+
+<ul class="facts">
+  <li>Id: {{service.id}}</li>
+  <li>Duración: {{service.duration}} minutos</li>
+  <li>Precio: ${{service.price}}</li>
+  <li>Categoría: {{service.category}}</li>
+  <li>
+    Estado:
+    {{#if service.available}}disponible{{else}}no disponible{{/if}}
+  </li>
+</ul>

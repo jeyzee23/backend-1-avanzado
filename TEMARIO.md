@@ -94,7 +94,7 @@ Route → Controller → Service → Repository → DAO → persistencia
 
 ---
 
-## Semana 7 — Handlebars y WebSockets  ← mañana
+## Semana 7 — Handlebars y WebSockets
 
 **Lista en esta carpeta.**
 
@@ -110,15 +110,19 @@ Route → Controller → Service → Repository → DAO → persistencia
 
 ---
 
-## Semana 8 — Consultas avanzadas, validación y populate
+## Semana 8 — Consultas avanzadas, validación y populate  ← mañana
+
+**Lista en esta carpeta.**
 
 **Idea fuerza:** un endpoint profesional no es `find()`.
 
-- Filtros, sort, paginación.
-- Zod o Joi en el borde HTTP.
-- `populate` para armar la reserva con el servicio completo (la vista de la 7 ya lo “simula” a mano).
+- Filtros `category` y `available` (incluido `false`), `sortBy`/`order`, paginación acotada.
+- Metadata con el **count filtrado**.
+- Zod en body/query/params. 400 de formato **antes** de Mongo.
+- Existencia 404 y disponibilidad 400 viven en el service, no en Zod.
+- Reserva guarda `{ service: ObjectId, quantity }`. Detalle con `populate('services.service')`.
 
-**Salida:** `GET /api/services?category=salud&page=1` + booking hidratado.
+**Salida:** `GET /api/services?category=salud&available=true&page=1` + booking hidratado.
 
 ---
 

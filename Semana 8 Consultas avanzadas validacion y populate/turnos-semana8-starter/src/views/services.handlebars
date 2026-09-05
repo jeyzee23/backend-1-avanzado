@@ -1,0 +1,25 @@
+<h1>Servicios</h1>
+<p class="lede">
+  Vista HTML de consulta. La paginación y los filtros viven en
+  <code>GET /api/services?category=salud&amp;available=true&amp;page=1</code>.
+</p>
+
+{{#if services.length}}
+  <div class="grid">
+    {{#each services}}
+      <article class="card">
+        <p class="meta">{{category}} · {{duration}} min</p>
+        <h2><a href="/services/{{id}}">{{name}}</a></h2>
+        <p>{{description}}</p>
+        <p class="price">${{price}}</p>
+        {{#if available}}
+          <span class="badge ok">Disponible</span>
+        {{else}}
+          <span class="badge no">No disponible</span>
+        {{/if}}
+      </article>
+    {{/each}}
+  </div>
+{{else}}
+  <p>No hay servicios todavía. Corré <code>npm run seed</code>.</p>
+{{/if}}

@@ -34,5 +34,23 @@
     "price": 28000,
     "category": "bienestar",
     "available": false
+  },
+  {
+    "id": 5,
+    "name": "tiempo real",
+    "description": "tiempo real",
+    "duration": 30,
+    "price": 18000,
+    "category": "estetica",
+    "available": true
+  },
+  {
+    "id": 6,
+    "name": "Servicio Personazalido",
+    "description": "Clase de backend I",
+    "duration": 2,
+    "price": 18000,
+    "category": "tecnologia",
+    "available": true
   }
 ]

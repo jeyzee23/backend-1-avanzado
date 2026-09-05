@@ -14,26 +14,30 @@ Misma organización que Backend II (`backend-2-arquitectura`): una carpeta por s
 | 4 | Routers, Controllers y organización | `routes → controllers → managers` | `../backend-routers-controllers` + starter |
 | 5 | Arquitectura en capas: DAO y Repository | Desacoplar negocio de persistencia (como Semana 8 de Backend II) | Pendiente — calcar `backend-2-arquitectura/Semana 8` |
 | 6 | MongoDB Atlas y Mongoose | Schemas de services, bookings y messages | Pendiente |
-| **7** | **Vistas con Handlebars y WebSockets** | SSR + Socket.io, tablero en vivo | **Esta carpeta — lista para mañana** |
-| 8 | Consultas avanzadas, validación y populate | Filtros, paginación, Zod/Joi, relaciones | Pendiente |
+| 7 | Vistas con Handlebars y WebSockets | SSR + Socket.io, tablero en vivo | `Semana 7 Vistas Handlebars y WebSockets/` |
+| **8** | **Consultas avanzadas, validación y populate** | Filtros, paginación, Zod, populate | **Esta carpeta — lista para mañana** |
 | 9 | Proyecto final | API completa + vistas + real-time + populate | Pendiente |
 
 El programa oficial está en `~/Desktop/program-summary.pdf`.
 
-## Semana 7 (prioridad — clase de mañana)
+## Semana 8 (prioridad — clase de mañana)
 
 ```
-Semana 7 Vistas Handlebars y WebSockets/
+Semana 8 Consultas avanzadas validacion y populate/
   GUIA_DOCENTE.md              ← leé esto para dictar
-  turnos-semana7-completa/     ← demo resuelta (ya levantada)
-  turnos-semana7-starter/      ← lo que abrís en vivo
-  postman/                     ← API + nota de cómo demoar sockets
+  turnos-semana8-starter/      ← lo que abrís en vivo
+  turnos-semana8-completa/     ← demo resuelta
+  postman/                     ← casos buenos y 400/404
 ```
 
 ```bash
-cd "Semana 7 Vistas Handlebars y WebSockets/turnos-semana7-completa"
+cd "Semana 8 Consultas avanzadas validacion y populate/turnos-semana8-completa"
+cp .env.example .env   # Codex completa MONGO_URL (Atlas)
 npm install
+npm run seed
 npm run dev
-# http://localhost:8080
-# http://localhost:8080/realtime
+# http://localhost:8080/api/services?category=salud&available=false
+# http://localhost:8080/bookings
 ```
+
+Semana 7 queda en `Semana 7 Vistas Handlebars y WebSockets/` (no la toques).

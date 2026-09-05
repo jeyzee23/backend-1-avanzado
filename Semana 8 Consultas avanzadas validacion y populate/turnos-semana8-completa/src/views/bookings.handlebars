@@ -1,0 +1,17 @@
+<h1>Reservas</h1>
+<p class="lede">
+  El listado no hidrata servicios. El detalle sí: abrí una reserva para ver populate.
+</p>
+
+{{#if bookings.length}}
+  <ul class="list">
+    {{#each bookings}}
+      <li>
+        <a href="/bookings/{{id}}">{{clientName}}</a>
+        <span>{{date}} {{time}} · {{status}}</span>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No hay reservas. Corré <code>npm run seed</code>.</p>
+{{/if}}

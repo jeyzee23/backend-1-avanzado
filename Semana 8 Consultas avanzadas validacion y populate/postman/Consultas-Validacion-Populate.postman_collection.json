@@ -1,0 +1,846 @@
+{
+  "info": {
+    "name": "Consultas Validacion Populate - Turnos",
+    "description": "Sistema de Turnos. Ejecutar las carpetas en orden con Collection Runner. Solución: baseUrl http://localhost:8080; starter: http://localhost:8081. Las verificaciones de consultas, validación y populate deben pasar en la solución y sirven de objetivos para el starter. La ejecución crea dos servicios y una reserva de demostración. Para pruebas aisladas usar una instancia conectada a turnos_semana8_test.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "serviceId",
+      "value": ""
+    },
+    {
+      "key": "unavailableServiceId",
+      "value": ""
+    },
+    {
+      "key": "bookingId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 - Consultas buenas",
+      "item": [
+        {
+          "name": "Listar servicios (defaults)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Paginacion consistente', () => { const b=pm.response.json(); pm.expect(b.payload).to.be.an('array'); pm.expect(b.payload.length).to.be.at.most(b.limit); pm.expect(b.totalPages).to.eql(Math.ceil(b.totalDocs/b.limit)); pm.expect(b.hasNextPage).to.eql(b.page < b.totalPages); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtrar category=salud y available=true",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services?category=salud&available=true&page=1&limit=5&sortBy=price&order=asc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Paginacion consistente', () => { const b=pm.response.json(); pm.expect(b.payload).to.be.an('array'); pm.expect(b.payload.length).to.be.at.most(b.limit); pm.expect(b.totalPages).to.eql(Math.ceil(b.totalDocs/b.limit)); pm.expect(b.hasNextPage).to.eql(b.page < b.totalPages); });",
+                  "pm.test('Filtro y precio ascendente', () => { const a=pm.response.json().payload; pm.expect(a.length).to.be.above(0); a.forEach((s,i)=>{pm.expect(s.category).to.eql('salud');pm.expect(s.available).to.eql(true);if(i)pm.expect(s.price).to.be.at.least(a[i-1].price);}); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtrar available=false",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services?available=false"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Paginacion consistente', () => { const b=pm.response.json(); pm.expect(b.payload).to.be.an('array'); pm.expect(b.payload.length).to.be.at.most(b.limit); pm.expect(b.totalPages).to.eql(Math.ceil(b.totalDocs/b.limit)); pm.expect(b.hasNextPage).to.eql(b.page < b.totalPages); });",
+                  "pm.test('Disponibilidad false', () => { const a=pm.response.json().payload; pm.expect(a.length).to.be.above(0); a.forEach(s=>pm.expect(s.available).to.eql(false)); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Pagina 2 limit 3 sortBy=duration",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services?page=2&limit=3&sortBy=duration&order=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Paginacion consistente', () => { const b=pm.response.json(); pm.expect(b.payload).to.be.an('array'); pm.expect(b.payload.length).to.be.at.most(b.limit); pm.expect(b.totalPages).to.eql(Math.ceil(b.totalDocs/b.limit)); pm.expect(b.hasNextPage).to.eql(b.page < b.totalPages); });",
+                  "pm.test('Segunda pagina y duracion descendente', () => { const b=pm.response.json();pm.expect(b.page).to.eql(2);pm.expect(b.limit).to.eql(3);b.payload.forEach((s,i,a)=>{if(i)pm.expect(s.duration).to.be.at.most(a[i-1].duration);}); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Compatibilidad sort=desc (price)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services?sort=desc&limit=5"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Paginacion consistente', () => { const b=pm.response.json(); pm.expect(b.payload).to.be.an('array'); pm.expect(b.payload.length).to.be.at.most(b.limit); pm.expect(b.totalPages).to.eql(Math.ceil(b.totalDocs/b.limit)); pm.expect(b.hasNextPage).to.eql(b.page < b.totalPages); });",
+                  "pm.test('Precio descendente', () => pm.response.json().payload.forEach((s,i,a)=>{if(i)pm.expect(s.price).to.be.at.most(a[i-1].price);}));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Servicios CRUD",
+      "item": [
+        {
+          "name": "Crear servicio disponible",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json.payload?._id) pm.collectionVariables.set('serviceId', String(json.payload._id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consulta de guardia\",\n  \"description\": \"Atención inmediata de 20 minutos\",\n  \"duration\": 20,\n  \"price\": 18000,\n  \"category\": \"salud\",\n  \"available\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/services"
+          }
+        },
+        {
+          "name": "Crear servicio no disponible",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json.payload?._id) pm.collectionVariables.set('unavailableServiceId', String(json.payload._id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Masaje nocturno\",\n  \"description\": \"Fuera de agenda\",\n  \"duration\": 60,\n  \"price\": 30000,\n  \"category\": \"bienestar\",\n  \"available\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/services"
+          }
+        },
+        {
+          "name": "Obtener servicio por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar precio",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 19000\n}"
+            },
+            "url": "{{baseUrl}}/api/services/{{serviceId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Precio actualizado', () => pm.expect(pm.response.json().payload.price).to.eql(19000));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Reservas y populate",
+      "item": [
+        {
+          "name": "Listar reservas (sin populate)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear reserva",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "if (json.payload?._id) pm.collectionVariables.set('bookingId', String(json.payload._id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientName\": \"María Ruiz\",\n  \"clientEmail\": \"maria@example.com\",\n  \"date\": \"2026-09-18\",\n  \"time\": \"11:00\",\n  \"status\": \"pending\"\n}"
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          }
+        },
+        {
+          "name": "Agregar servicio a la reserva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/services/{{serviceId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Agregar el mismo servicio (incrementa quantity)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/services/{{serviceId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle con populate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Referencia resuelta y cantidad acumulada', () => {const b=pm.response.json().payload; pm.expect(b.services).to.have.lengthOf(1);const s=b.services[0];pm.expect(s.quantity).to.eql(2);pm.expect(s.service._id).to.eql(pm.collectionVariables.get('serviceId'));pm.expect(s.service.name).to.eql('Consulta de guardia');pm.expect(s.service.price).to.eql(19000);pm.expect(s.service).not.to.have.property('seedKey');pm.expect(s.service).not.to.have.property('__v');});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Errores (400 / 404)",
+      "item": [
+        {
+          "name": "400 crear servicio sin name",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"description\": \"x\",\n  \"duration\": 30,\n  \"price\": 10,\n  \"category\": \"salud\"\n}"
+            },
+            "url": "{{baseUrl}}/api/services"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 duration como string",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consulta\",\n  \"description\": \"x\",\n  \"duration\": \"30\",\n  \"price\": 10,\n  \"category\": \"salud\"\n}"
+            },
+            "url": "{{baseUrl}}/api/services"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 update vacío",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/api/services/{{serviceId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 page=0",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services?page=0"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 limit=100",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services?limit=100"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 id estilo semana 7",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services/1"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "404 ObjectId inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services/65f1abc65f1abc65f1abc65f"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 reserva email inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientName\": \"Laura\",\n  \"clientEmail\": \"laura\",\n  \"date\": \"2026-09-10\",\n  \"time\": \"10:00\"\n}"
+            },
+            "url": "{{baseUrl}}/api/bookings"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 agregar sid inválido",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/services/1"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "404 agregar servicio inexistente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/services/65f1abc65f1abc65f1abc65f"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 agregar servicio no disponible",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/services/{{unavailableServiceId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error con mensaje claro', () => { const body=pm.response.json(); pm.expect(body.status).to.eql('error'); pm.expect(body.message).to.be.a('string').and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 available desconocido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services?available=no"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado esperado', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 sortBy desconocido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/services?sortBy=password"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado esperado', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 actualizar precio negativo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"price\":-1}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado esperado', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "400 cantidad cero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/services/{{serviceId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"quantity\":0}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado esperado', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "404 reserva inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/000000000000000000000000"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado esperado', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "404 agregar a reserva inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/bookings/000000000000000000000000/services/{{serviceId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado esperado', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - Eliminacion",
+      "item": [
+        {
+          "name": "Eliminar servicio no disponible",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/services/{{unavailableServiceId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Servicio eliminado', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "404 servicio eliminado",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/services/{{unavailableServiceId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Servicio ya no existe', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
